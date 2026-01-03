@@ -3,21 +3,43 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
         try(Scanner sc = new Scanner(System.in)){
-            System.out.print("$ ");
-            while (sc.hasNextLine()) {
-
+            while (true) {
+                System.out.print("$ ");
                 String input = sc.nextLine();
-                String command = input.split(" ")[0];
+                String[] parts = input.split(" ",2);
+                String command = parts[0];
                 switch (command) {
+                    case "type" -> typeCheck(parts.length>1 ? parts[1] : "");
                     case "exit" -> System.exit(0);
-                    case "echo" -> System.out.println(input.split(" ",2)[1]);
+                    case "echo" -> System.out.println(parts[1]);
                     default -> System.out.println(command + ": command not found");
                 }
-
-                System.out.print("$ ");
-
             }
+        }
+    }
 
+    private static void typeCheck(String command) {
+        if (BuiltinCommand.from(command) != null){
+           System.out.println(command + " is a shell builtin");
+        } else  {
+            System.out.println(command + ": not found");
+        }
+    }
+    private enum BuiltinCommand {
+        ECHO("echo"),
+        EXIT("exit"),
+        TYPE("type");
+        private final String name;
+
+        BuiltinCommand(String name) {
+            this.name = name;
+        }
+
+        public static BuiltinCommand from(String name) {
+            for (BuiltinCommand command : BuiltinCommand.values()) {
+                if (command.name.equals(name)) return command;
+            }
+            return null;
         }
     }
 }
