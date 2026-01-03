@@ -1,3 +1,7 @@
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Main {
@@ -21,9 +25,20 @@ public class Main {
     private static void typeCheck(String command) {
         if (BuiltinCommand.from(command) != null){
            System.out.println(command + " is a shell builtin");
-        } else  {
-            System.out.println(command + ": not found");
+           return;
         }
+        String pathEnv = System.getenv("PATH");
+        if (pathEnv != null) {
+            String[] paths = pathEnv.split(File.pathSeparator);
+            for (String path : paths) {
+                Path fullPath = Paths.get(path, command);
+                if (Files.exists(fullPath) && Files.isExecutable(fullPath)) {
+                    System.out.println(command + " is " + fullPath);
+                    return;
+                }
+            }
+        }
+        System.out.println(command + ": not found");
     }
     private enum BuiltinCommand {
         ECHO("echo"),
