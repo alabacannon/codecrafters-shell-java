@@ -10,10 +10,11 @@ public class Main {
             while (true) {
                 System.out.print("$ ");
                 String input = sc.nextLine();
-                String[] parts = input.split(" ");
+                String[] parts = input.split(" ",2);
+                String[] arguments = input.split(" ");
                 String command = parts[0];
                 if (BuiltinCommand.from(command)!=null) handleBuiltin(command, parts);
-                else handleExternal(command, parts);
+                else handleExternal(command, arguments);
             }
         }
     }
